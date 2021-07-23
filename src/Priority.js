@@ -1,10 +1,6 @@
 import React,{useState , useEffect} from 'react';
 import { Alert } from './Alert';
 import { List } from './List';
-import ProductTitle from './ProductTitle';
-import ProductName from './ProductName';
-import Description from './Description';
-import Priority from './Priority';
 
 const getLocalStorage = () => {
   let list = localStorage.getItem('list');
@@ -18,7 +14,7 @@ const getLocalStorage = () => {
 
 
 function App() {
-  const [name, setName] = useState('');
+  const [titles, setTitle] = useState('');
   const [list, setList] = useState(getLocalStorage);
   const [isEditing, setIsEditing] = useState(false);
   const [editID, setEditID] = useState(null);
@@ -30,30 +26,30 @@ function App() {
 
   const haldleSubmit = (e) => {
     e.preventDefault()
-    if(!name){
+    if(!titles){
       //display alert
       showAlert(true, 'danger', 'please enter value')
       setAlert({show: true, msg: 'please enter value', type: 'denger'})
     }
-    else if(name && isEditing){
+    else if(titles && isEditing){
       //deal with edit
       setList(list.map((item)=> {
         if(item.id=== editID){
-          return{ ...item, title: name}
+          return{ ...item, title: titles}
         }
         return item
       })
       )
-      setName('');
+      setTitle('');
       setEditID(null);
       setIsEditing(false);
       showAlert(true,'Success','value changed')
     }
     else{
       showAlert(true, 'success', 'item added to the list')
-      const newItem = {id: new Date().getTime().toString(), title: name};
+      const newItem = {id: new Date().getTime().toString(), title: titles};
       setList([...list, newItem]);
-      setName('');
+      setTitle('');
     }
   }
 
@@ -73,7 +69,7 @@ function App() {
     const specificItem = list.find((item)=> item.id === id);
     setIsEditing(true)
     setEditID(id)
-    setName(specificItem.title)
+    setTitle(specificItem.title)
 
   }
 
@@ -82,12 +78,12 @@ function App() {
   }, [list])
 
   return (
-    <section className="section-center">
+    <section>
       <form action="grocery-form" onSubmit={haldleSubmit}>
         {alert.show && <Alert {...alert} removeAlert={showAlert} list={list} />}
-        <h3>project Name</h3>
+        <h3>priority</h3>
         <div className="form-control">
-          <input  type="text" className="grocery" placeholder="Project Name" value={name} onChange={(e) => setName(e.target.value)} />
+          <input type="text" className="grocery" placeholder="priority" value={titles} onChange={(e) => setTitle(e.target.value)} />
         </div>
           <button type="submit" className="submit-btn" >
             {isEditing ? 'edit' : 'submit'}
@@ -97,10 +93,6 @@ function App() {
         <List items={list} removeItem={removeItem} editiItem={editiItem} />
         <button className="clear-btn" onClick={clearList}>clear item</button>
       </div>
-      <ProductTitle />
-      <ProductName />
-      <Description />
-      <Priority />
     </section>
   );
 }
